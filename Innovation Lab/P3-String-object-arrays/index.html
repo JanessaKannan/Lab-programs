@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mini text analyzer</title>
+</head>
+<body>
+    <h2>Mini text analyzer</h2>
+    <textarea id="paragraphInput" placeholder="Enter a paragraph" rows="6" cols="60"></textarea><br>
+    <button onclick="analyzeText()">Analyze</button>
+    <pre id="output" style="white-space: pre-wrap; background: #f0f0f0; padding: 10px; margin-top: 10px;"></pre>
+
+    <script>
+        function analyzeText() {
+            const text = document.getElementById("paragraphInput").value;
+
+            const totalChars = text.length;
+
+            // Match words using regex - this matches word characters (\w) including apostrophes (for contractions)
+            const words = text.match(/\b[\w']+\b/g) || [];
+            const totalWords = words.length;
+
+            // Count sentences by punctuation marks like '.', '!', '?'
+            const totalSentences = (text.match(/[.!?]+/g) || []).length;
+
+            // Unique words (lowercased)
+            const uniqueWords = [...new Set(words.map(w => w.toLowerCase()))];
+
+            // Frequency count
+            const freq = {};
+            words.forEach(word => {
+                const w = word.toLowerCase();
+                freq[w] = (freq[w] || 0) + 1;
+            });
+
+            // Sort frequency by count descending
+            const sortedFreq = Object.entries(freq).sort((a, b) => b[1] - a[1]);
+
+            const output = `
+Total characters: ${totalChars}
+Total words: ${totalWords}
+Total sentences: ${totalSentences}
+Unique words: ${uniqueWords.join(", ")}
+
+Word frequency:
+${sortedFreq.map(([word, count]) => word + ": " + count).join("\n")}
+            `;
+
+            document.getElementById("output").textContent = output;
+        }
+    </script>
+</body>
+</html>
